@@ -1,0 +1,22 @@
+#!/bin/bash -e
+
+if [ $# != 1 ]; then
+  echo "usage: $0 <project-name>"
+  exit 1
+fi
+
+THIS_PATH=`dirname "$0"`
+SIDE_PROJECTS="$HOME/Desktop/side/"
+PROJECT_NAME="$1"
+
+mkdir "$SIDE_PROJECTS$PROJECT_NAME"
+
+for PROJECT_FILENAME in "index.html" "README.md"; do
+  cat "$THIS_PATH/templates/$PROJECT_FILENAME" \
+    | awk -v "project=$PROJECT_NAME" '{ gsub(/\$PROJECT_NAME/, project); print }' \
+    > "$SIDE_PROJECTS$PROJECT_NAME/$PROJECT_FILENAME"
+done
+
+cp -r "$THIS_PATH/templates/public/" "$SIDE_PROJECTS$PROJECT_NAME/public/"
+
+echo ".DS_Store" > "$SIDE_PROJECTS$PROJECT_NAME/.gitignore"
